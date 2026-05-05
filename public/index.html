@@ -20,32 +20,39 @@ async function loadTasks() {
   const list = document.getElementById('taskList');
   list.innerHTML = '';
 
-  tasks.forEach((task, index) => {
+  tasks.forEach(task => {
     const li = document.createElement('li');
+
     li.innerHTML = `
-      ${task}
-      <button onclick="deleteTask(${index})">Delete</button>
+      ${task.name}
+      <button onclick="deleteTask(${task.id})">Delete</button>
     `;
+
     list.appendChild(li);
   });
 }
 
 async function addTask() {
   const input = document.getElementById('taskInput');
-  const task = input.value;
+  const name = input.value;
+
+  if (!name) return;
 
   await fetch('/add', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ task })
+    body: JSON.stringify({ name })
   });
 
   input.value = '';
   loadTasks();
 }
 
-async function deleteTask(index) {
-  await fetch('/delete/' + index, { method: 'DELETE' });
+async function deleteTask(id) {
+  await fetch('/delete/' + id, {
+    method: 'DELETE'
+  });
+
   loadTasks();
 }
 
